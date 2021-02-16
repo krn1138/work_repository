@@ -45,10 +45,8 @@ class VendingMachine
   def check_buy_cola
     if @slot_money >= (@price[:cola]) && (@stock[:cola]) != 0
       return "販売中"
-
     elsif @slot_money < (@price[:cola]) && (@stock[:cola]) != 0
       return "お金が足りません"
-
     else
       return  "売り切れ"
     end
