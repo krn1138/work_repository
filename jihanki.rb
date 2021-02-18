@@ -53,12 +53,13 @@ class VendingMachine
       false
     end
   end
+  
   #現在の売上金額を取得できる。
   def total_sales
     @stock.current_sales
   end
+
   #ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
-# :必須↓(:cola)
   def purchase(item)
     if can_buy?(item)
       @slot_money -= Drink::price(item)
@@ -67,6 +68,7 @@ class VendingMachine
       false
     end
   end
+
   #払い戻し操作では現在の投入金額からジュース購入金額を引いた釣り銭を出力する。
   #ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、釣り銭（投入金額とジュース値段の差分）を出力する。
   def refund(item)
@@ -74,7 +76,7 @@ class VendingMachine
   end
 
  #投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
- def available_items
-   @stock.available_items(current_slot_money)
- end
+  def available_items
+    @stock.available_items(current_slot_money)
+  end
 end
