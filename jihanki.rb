@@ -1,12 +1,13 @@
 #require './jihanki.rb'
 #vm = VendingMachine.new
+#load './jihanki.rb'
 
 require './drink.rb'
 require './inventory.rb'
 
 class VendingMachine
-  # ステップ０　お金の投入と払い戻しの例コード
-  # ステップ１　扱えないお金の例コード
+  # ステップ０  お金の投入と払い戻しの例コード
+  # ステップ１扱えないお金の例コード
   # 10円玉、50円玉、100円玉、500円玉、1000円札を１つずつ投入できる。
   MONEY = [10, 50, 100, 500, 1000].freeze
 
@@ -20,6 +21,9 @@ class VendingMachine
     @stock=Inventory.new
     @stock.add( Drink.new(Drink::Kind::COLA), 5 )
   end
+  def stock
+    @stock
+  end
   # 投入金額の総計を取得できる。
   def current_slot_money
     # 自動販売機に入っているお金を表示する
@@ -32,18 +36,12 @@ class VendingMachine
   def slot_money(money)
     # 想定外のもの（１円玉や５円玉。千円札以外のお札、そもそもお金じゃないもの（数字以外のもの）など）
     # が投入された場合は、投入金額に加算せず、それをそのまま釣り銭としてユーザに出力する。
-    return false unless MONEY.include?(money)
+    puts "#{money}"  unless MONEY.include?(money)
     # 自動販売機にお金を入れる
     @slot_money += money
     #投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
     puts @stock.available_items(current_slot_money)
-    item = gets.to_i
-    if can_buy?(item)
-      @slot_money -= Drink::price(item)
-      return (@stock.pull_one(item)>0 ? true : false)
-    else
-      false
-    end
+    @slot_money
   end
 
   # 払い戻し操作を行うと、投入金額の総計を釣り銭として出力する。
@@ -90,4 +88,4 @@ class VendingMachine
 #   def refund(item)
 #     purchase(item) ? @slot_money : false
 #   end
-# end
+end
