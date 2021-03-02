@@ -56,11 +56,22 @@ class Drink
   end
 
   # 以下はクラスメソッド定義
+  # 価格表に、指定した飲み物が登録されているか取得
+  # 使用例
+  # judge = Drink::present?(100)
+  def self.present? (kind)
+    if( !(kind.class==Integer && kind>=0) )
+      puts '種別は正の整数値を指定してください'   #return nil
+    else
+      ITEMS_MASTER.has_key?(kind)
+    end
+  end
+
   # 価格表から、指定した飲み物の価格を取得
   # 使用例
   # price = Drink::price(Kind::COLA)
   def self.price (kind)
-    if(kind.class!=Integer)
+    if( !(kind.class==Integer && kind>=0) )
       puts '種別は正の整数値を指定してください'   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       ITEMS_MASTER[kind][:price]
@@ -73,7 +84,7 @@ class Drink
   # 使用例
   # name =  Drink::name(Kind::COLA)
   def self.name (kind)
-    if(kind.class!=Integer)
+    if( !(kind.class==Integer && kind>=0) )
       puts '種別は正の整数値を指定してください'   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       ITEMS_MASTER[kind][:name]
@@ -86,7 +97,7 @@ class Drink
   # 使用例
   # result =  Drink::insert(4, "milk", 200)
   def self.insert(kind, name, price)
-    if(kind.class!=Integer)
+    if( !(kind.class==Integer && kind>=0) )
       puts '種別は正の整数値を指定してください'   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       puts "specified kind is already exists."  #return nil
@@ -99,7 +110,7 @@ class Drink
   # 使用例
   # result =  Drink::update(Kind::COLA, "coke", 150)
   def self.update(kind, name: name="Unspecified", price: price=-1)
-    if(kind.class!=Integer)
+    if( !(kind.class==Integer && kind>=0) )
       puts '種別は正の整数値を指定してください'   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       if ( (name != "Unspecified")  && !name.empty? )
@@ -118,7 +129,7 @@ class Drink
   # 使用例
   # result = Drink::destroy(Kind::COLA)
   def self.destroy(kind)
-    if(kind.class!=Integer)
+    if( !(kind.class==Integer && kind>=0) )
       puts '種別は正の整数値を指定してください'   #return nil
     else
       ITEMS_MASTER.delete(kind)  #return nil if kind is NOT exists
