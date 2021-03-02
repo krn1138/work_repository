@@ -105,10 +105,13 @@ class Inventory
     end
   end
 
+  #引数で渡された投入金額と在庫の点から購入可能な種別を配列で返却
   def available_items(input_money)
-    if( !(input_money==Integer && input_money >= 0) ) #入力された金額が正の整数でなければnilを返却
-      puts MsgErrInvalidMoney #return nil
-    elsif
+    if( input_money.class != Integer ) #入力された金額が正の整数でなければnilを返却
+      puts MsgErrInvalidMoney          #return nil
+    elsif( input_money < 0 )           #入力された金額が正の整数でなければnilを返却
+      puts MsgErrInvalidMoney          #return nil
+    else
       ret_array=[]
       @hash_num.each do |kind, num|
         if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
