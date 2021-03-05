@@ -76,11 +76,19 @@ class VendingMachine
   def purchase(item)
     if can_buy?(item)
       @slot_money -= Drink::price(item)
-      return (@stock.pull_one(item)>0 ? true : false)
+      # return (@stock.pull_one(item)>0 ? true : false)
+      if @stock.pull_one(item)>0
+        puts @stock.available_items(current_slot_money)
+        puts current_slot_money
+        true
+      else
+        false
+      end
     else
       false
     end
   end
+end
 
   #def return_moneyと同意味
   #払い戻し操作では現在の投入金額からジュース購入金額を引いた釣り銭を出力する。
@@ -88,4 +96,3 @@ class VendingMachine
 #   def refund(item)
 #     purchase(item) ? @slot_money : false
 #   end
-end
