@@ -97,7 +97,7 @@ class VendingMachine
     items.each do |item|
       msg += item.to_s + ":#{Drink::name(item)}\n"
     end
-     puts "現在の投入金額は#{@slot_money}円です。"
+    puts "現在の投入金額は#{@slot_money}円です。"
     msg
   end
 end
