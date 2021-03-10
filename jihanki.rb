@@ -21,9 +21,11 @@ class VendingMachine
     @stock=Inventory.new
     @stock.add( Drink.new(Drink::Kind::COLA), 5 )
   end
+
   def stock
     @stock
   end
+
   # 投入金額の総計を取得できる。
   def current_slot_money
     # 自動販売機に入っているお金を表示する
@@ -40,7 +42,7 @@ class VendingMachine
     # 自動販売機にお金を入れる
     @slot_money += money
     #投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
-    puts @stock.available_items(current_slot_money)
+    puts lamp(@stock.available_items(current_slot_money))
     @slot_money
   end
 
@@ -78,8 +80,7 @@ class VendingMachine
       @slot_money -= Drink::price(item)
       # return (@stock.pull_one(item)>0 ? true : false)
       if @stock.pull_one(item)>0
-        puts @stock.available_items(current_slot_money)
-        puts current_slot_money
+        puts lamp(@stock.available_items(current_slot_money))
         true
       else
         false
@@ -87,6 +88,17 @@ class VendingMachine
     else
       false
     end
+  end
+
+  private
+  def lamp(items)
+    # 在庫に問い合わせた購入可能商品を文字列にする
+    msg = "購入可能商品:\n"
+    items.each do |item|
+      msg += item.to_s + ":#{Drink::name(item)}\n"
+    end
+     puts "現在の投入金額は#{@slot_money}円です。"
+    msg
   end
 end
 

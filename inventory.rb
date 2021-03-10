@@ -113,18 +113,18 @@ class Inventory
       puts MsgErrInvalidMoney          #return nil
     else
       ret_array=[]
-      msg="購入可能商品: "
-      msg2=""      
+      # msg="購入可能商品: "
+      # msg2=""
       @hash_num.each do |kind, num|
         if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
           ret_array << kind
-          msg2 += "\n#{kind.to_s}: #{Drink::name(kind)}"
+          # msg2 += "\n#{kind.to_s}: #{Drink::name(kind)}"
         end
       end
       # puts msg
-      # ret_array
-      msg2="無し" if msg2.empty?
-      msg+= msg2
+      ret_array
+      # msg2="無し" if msg2.empty?
+      # msg+= msg2
     end
   end
 end
