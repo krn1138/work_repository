@@ -38,12 +38,15 @@ class VendingMachine
   def slot_money(money)
     # 想定外のもの（１円玉や５円玉。千円札以外のお札、そもそもお金じゃないもの（数字以外のもの）など）
     # が投入された場合は、投入金額に加算せず、それをそのまま釣り銭としてユーザに出力する。
-    puts "#{money}"  unless MONEY.include?(money)
+    unless MONEY.include?(money)
+      puts "#{money}"
+    return
+    end
     # 自動販売機にお金を入れる
     @slot_money += money
     #投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
     puts lamp(@stock.available_items(current_slot_money))
-    @slot_money
+    # @slot_money削除
   end
 
   # 払い戻し操作を行うと、投入金額の総計を釣り銭として出力する。
@@ -101,6 +104,7 @@ class VendingMachine
     msg
   end
 end
+
 
   #def return_moneyと同意味
   #払い戻し操作では現在の投入金額からジュース購入金額を引いた釣り銭を出力する。
