@@ -2,6 +2,7 @@ require './drink.rb'
 
 #在庫/売上管理クラス
 class Inventory
+  attr_reader :hash_num
 
   #エラーメッセージ
   MsgErrInvalidObject='取り扱い対象外です.'
@@ -17,9 +18,6 @@ class Inventory
     @sales=0
   end
 
-  def hash_num
-    @hash_num
-  end
   #在庫の追加
   def add(drink_obj, num)
     if( drink_obj.class != Drink )
