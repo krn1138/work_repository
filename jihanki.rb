@@ -38,7 +38,10 @@ class VendingMachine
   def slot_money(money)
     # 想定外のもの（１円玉や５円玉。千円札以外のお札、そもそもお金じゃないもの（数字以外のもの）など）
     # が投入された場合は、投入金額に加算せず、それをそのまま釣り銭としてユーザに出力する。
-    puts "#{money}"  unless MONEY.include?(money)
+    unless MONEY.include?(money)
+      puts "#{money}"
+      return
+    end
     # 自動販売機にお金を入れる
     @slot_money += money
     #投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
