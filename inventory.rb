@@ -113,19 +113,18 @@ class Inventory
     elsif( input_money < 0 )           #入力された金額が正の整数でなければnilを返却
       puts MsgErrInvalidMoney          #return nil
     else
-      ret_array=[]
-      # msg="購入可能商品: "
-      # msg2=""
-      @hash_num.each do |kind, num|
+#      ret_array=[]
+#      @hash_num.each do |kind, num|
+#        if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
+#          ret_array << kind
+#        end
+#      end
+      @hash_num.map do |kind, num|
         if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
-          ret_array << kind
-          # msg2 += "\n#{kind.to_s}: #{Drink::name(kind)}"
+          kind
         end
-      end
-      # puts msg
-      ret_array
-      # msg2="無し" if msg2.empty?
-      # msg+= msg2
+      end.compact
+#      ret_array
     end
   end
 end
