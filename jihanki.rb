@@ -1,4 +1,4 @@
-#require './jihanki.rb'
+p#require './jihanki.rb'
 #vm = VendingMachine.new
 #load './jihanki.rb'
 
@@ -15,15 +15,14 @@ class VendingMachine
   def initialize
     # 最初の自動販売機に入っている金額は0円
     @slot_money = 0
+
     # 初期状態で、コーラ（値段:120円、名前”コーラ”）を5本格納している。
     # @stock = {cola:5}
     # ジュースを3種類管理できるようにする。
     @stock=Inventory.new
     @stock.add( Drink.new(Drink::Kind::COLA), 5 )
   end
-  def stock
-    @stock
-  end
+
   # 投入金額の総計を取得できる。
   def current_slot_money
     # 自動販売機に入っているお金を表示する
@@ -36,18 +35,24 @@ class VendingMachine
   def slot_money(money)
     # 想定外のもの（１円玉や５円玉。千円札以外のお札、そもそもお金じゃないもの（数字以外のもの）など）
     # が投入された場合は、投入金額に加算せず、それをそのまま釣り銭としてユーザに出力する。
-    puts "#{money}"  unless MONEY.include?(money)
+    unless MONEY.include?(money)
+      puts "#{money}は使えません"
+      return
+    end
+
     # 自動販売機にお金を入れる
     @slot_money += money
     #投入金額、在庫の点で購入可能なドリンクのリストを取得できる。
-    puts @stock.available_items(current_slot_money)
+    puts lamp(@stock.available_items(current_slot_money))
+
     @slot_money
   end
 
   # 払い戻し操作を行うと、投入金額の総計を釣り銭として出力する。
   def return_money
     # 返すお金の金額を表示する
-    puts @slot_money
+    puts "#{@slot_money}円のお返しです！"
+
     # 自動販売機に入っているお金を0円に戻す
     @slot_money = 0
   end
@@ -57,6 +62,35 @@ class VendingMachine
     @stock.to_s
   end
 
+  # 在庫を追加する
+  def add_stock(drink_obj, num)
+    puts "在庫に#{Drink::name(drink_obj.kind)}を#{num}本補充しました"
+    @stock.add(drink_obj, num)
+  end
+
+  #現在の売上金額を取得できる。
+  def total_sales
+    _current_sales = @stock.current_sales
+    puts "現在の売上金額: #{_current_sales}円"
+  end
+
+  #ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
+  def purchase(item)
+    if can_buy?(item)
+      @slot_money -= Drink::price(item)
+      # return (@stock.pull_one(item)>0 ? true : false)
+      if @stock.pull_one(item)>0
+        puts lamp(@stock.available_items(current_slot_money))
+        true
+      else
+        false
+      end
+    else
+      false
+    end
+  end
+
+  private
   #投入金額、在庫の点で、コーラが購入できるかどうかを取得できる。
   def can_buy?(item)
     a = @stock.can_buy?(item , current_slot_money)
@@ -67,20 +101,16 @@ class VendingMachine
     end
   end
 
-  #現在の売上金額を取得できる。
-  def total_sales
-    @stock.current_sales
-  end
-
-  #ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
-  def purchase(item)
-    if can_buy?(item)
-      @slot_money -= Drink::price(item)
-      return (@stock.pull_one(item)>0 ? true : false)
-    else
-      false
+  def lamp(items)
+    # 在庫に問い合わせた購入可能商品を文字列にする
+    msg = "購入可能商品:\n"
+    items.each do |item|
+      msg += item.to_s + ":#{Drink::name(item)}\n"
     end
+    puts "現在の投入金額は#{@slot_money}円です。"
+    msg
   end
+end
 
   #def return_moneyと同意味
   #払い戻し操作では現在の投入金額からジュース購入金額を引いた釣り銭を出力する。
@@ -88,4 +118,3 @@ class VendingMachine
 #   def refund(item)
 #     purchase(item) ? @slot_money : false
 #   end
-end

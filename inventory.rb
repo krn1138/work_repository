@@ -2,6 +2,7 @@ require './drink.rb'
 
 #在庫/売上管理クラス
 class Inventory
+  attr_reader :hash_num
 
   #エラーメッセージ
   MsgErrInvalidObject='取り扱い対象外です.'
@@ -112,13 +113,18 @@ class Inventory
     elsif( input_money < 0 )           #入力された金額が正の整数でなければnilを返却
       puts MsgErrInvalidMoney          #return nil
     else
-      ret_array=[]
-      @hash_num.each do |kind, num|
+#      ret_array=[]
+#      @hash_num.each do |kind, num|
+#        if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
+#          ret_array << kind
+#        end
+#      end
+      @hash_num.map do |kind, num|
         if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
-          ret_array << kind
+          kind
         end
-      end
-      ret_array
+      end.compact
+#      ret_array
     end
   end
 end
