@@ -1,5 +1,13 @@
 # 自販機商品（飲み物）クラス
+
 class Drink
+  attr_reader :kind, :name, :price
+
+  # メッセージ
+  MsgErrInvalidKind = "[エラー]: 種別は正の整数値を指定してください."
+  MsgErrKindNotExists = "[エラー]: 指定された種別は未登録です."
+  MsgWarnKindAlreadyExists = "[警告]: 指定された種別は価格表に存在します.引数で指定されたname, priceは無視されます."
+
   # 商品種別定義
   module Kind
     NONE=0
@@ -24,11 +32,14 @@ class Drink
   # 注意, 指定された種別が数値で無い場合は例外をスローする
   #   v = Drink.new("cola") --> DrinkInitializ
   def initialize(kind, name='', price=0)
-    if(kind.class!=Integer)
-      raise DrinkInitializeError, "種別は正の整数値を指定してください. #{kind}.to_s"
+    if( !(kind.class==Integer && kind >=0) )
+      raise DrinkInitializeError, MsgErrInvalidKind + "#{kind}.to_s"
     else
       @kind = kind
       if ITEMS_MASTER.keys.include?(kind)
+        if (!name.empty? || price > 0)
+          puts MsgWarnKindAlreadyExists
+        end
         @name = ITEMS_MASTER[kind][:name]
         @price = ITEMS_MASTER[kind][:price]
       else
@@ -38,30 +49,13 @@ class Drink
     end
   end
 
-  # 以下はインスタンスメソッド定義
-
-  # 種別を返す
-  def kind
-    @kind
-  end
-
-  # 名前を返す
-  def name
-    @name
-  end
-
-  # 価格を返す
-  def price
-    @price
-  end
-
   # 以下はクラスメソッド定義
   # 価格表に、指定した飲み物が登録されているか取得
   # 使用例
   # judge = Drink::present?(100)
   def self.present? (kind)
     if( !(kind.class==Integer && kind>=0) )
-      puts '種別は正の整数値を指定してください'   #return nil
+      puts MsgErrInvalidKind #return nil
     else
       ITEMS_MASTER.has_key?(kind)
     end
@@ -72,11 +66,11 @@ class Drink
   # price = Drink::price(Kind::COLA)
   def self.price (kind)
     if( !(kind.class==Integer && kind>=0) )
-      puts '種別は正の整数値を指定してください'   #return nil
+      puts MsgErrInvalidKind #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       ITEMS_MASTER[kind][:price]
     else
-      puts "specified kind is not exists."  #return nil
+      puts MsgErrKindNotExists  #return nil
     end
   end
 
@@ -85,11 +79,11 @@ class Drink
   # name =  Drink::name(Kind::COLA)
   def self.name (kind)
     if( !(kind.class==Integer && kind>=0) )
-      puts '種別は正の整数値を指定してください'   #return nil
+      puts MsgErrInvalidKind   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       ITEMS_MASTER[kind][:name]
     else
-      puts "specified kind is not exists."  #return nil
+      puts MsgErrKindNotExists  #return nil
     end
   end
 
@@ -98,9 +92,9 @@ class Drink
   # result =  Drink::insert(4, "milk", 200)
   def self.insert(kind, name, price)
     if( !(kind.class==Integer && kind>=0) )
-      puts '種別は正の整数値を指定してください'   #return nil
+      puts MsgErrInvalidKind   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
-      puts "specified kind is already exists."  #return nil
+      puts MsgWarnKindAlreadyExists  #return nil
     else
       ITEMS_MASTER[kind]={name: name, price: price}
     end
@@ -111,7 +105,7 @@ class Drink
   # result =  Drink::update(Kind::COLA, "coke", 150)
   def self.update(kind, name: name="Unspecified", price: price=-1)
     if( !(kind.class==Integer && kind>=0) )
-      puts '種別は正の整数値を指定してください'   #return nil
+      puts MsgErrInvalidKind   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
       if ( (name != "Unspecified")  && !name.empty? )
         ITEMS_MASTER[kind][:name]=name
@@ -121,7 +115,7 @@ class Drink
       end
       ITEMS_MASTER[kind]
     else
-      puts "specified kind is not exists."  #return nil
+      puts MsgErrKindNotExists  #return nil
     end
   end
 
@@ -130,7 +124,7 @@ class Drink
   # result = Drink::destroy(Kind::COLA)
   def self.destroy(kind)
     if( !(kind.class==Integer && kind>=0) )
-      puts '種別は正の整数値を指定してください'   #return nil
+      puts MsgErrInvalidKind   #return nil
     else
       ITEMS_MASTER.delete(kind)  #return nil if kind is NOT exists
     end
