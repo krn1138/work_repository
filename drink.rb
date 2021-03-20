@@ -49,6 +49,18 @@ class Drink
     end
   end
 
+=begin
+  def kind
+    @kind
+  end
+  def name
+    @name
+  end
+  def price
+    @price
+  end
+=end
+
   # 以下はクラスメソッド定義
   # 価格表に、指定した飲み物が登録されているか取得
   # 使用例
@@ -134,11 +146,11 @@ class Drink
   # 使用例
   # result = Drink::init
   def self.init
-    ITEMS_MASTER={
-      Kind::COLA => {name: "cola", price: 120},
-      Kind::REDBULL => {name: "redbull", price: 200},
-      Kind::WATER => {name: "water", price: 100}
-    }
+    ITEMS_MASTER.clear
+    insert(Drink::Kind::COLA, "cola", 120)
+    insert(Drink::Kind::REDBULL, "redbull", 200)
+    insert(Drink::Kind::WATER, "water", 100)
+    ITEMS_MASTER
   end
 
   # 価格表の内容を文字列で出力
