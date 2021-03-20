@@ -1,4 +1,4 @@
-p#require './jihanki.rb'
+#require './jihanki.rb'
 #vm = VendingMachine.new
 #load './jihanki.rb'
 

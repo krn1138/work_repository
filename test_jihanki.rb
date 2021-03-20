@@ -4,12 +4,8 @@ require './drink.rb'
 require './inventory.rb'
 
 class VendingMachineTest < Minitest::Test
-  def test_vendeingmachine
+  def test_slot_money
     vm = VendingMachine.new
-    @slot_money = 0
-    @stock=Inventory.new
-    @stock.add( Drink.new(Drink::Kind::COLA), 5 )
-
     # 受付可能なお金を１つずつ投入できること
     assert_equal 10, vm.slot_money(10)
     vm.return_money
@@ -22,58 +18,60 @@ class VendingMachineTest < Minitest::Test
     assert_equal 1000, vm.slot_money(1000)
     vm.return_money
     assert_nil vm.slot_money(1)
-
-    # assert_output("",vm.slot_money(2000))
+    assert_nil vm.slot_money("kaziyama")
     #お金を投入したら購入可能商品と現在の投入金額が表示されること
-    vm.return_money
     assert_output("現在の投入金額は500円です。\n購入可能商品:\n1:cola\n",nil) do
-       vm.slot_money(500)
-    end
-
-	  # 投入したお金を払い戻しできること
-    vm.return_money
     vm.slot_money(500)
-    assert_equal 500, vm.current_slot_money
+    end
+  end
+
+    # 投入したお金を払い戻しできること
+  def test_return_money
+    vm1 = VendingMachine.new
+    vm1.slot_money(500)
+    assert_output("500円のお返しです！\n",nil) do #戻り値は0なのでoutputで作りました
+    vm1.return_money
+    end
+  end
 
     # 初期化された状態で投入金額は０円であること
-    vm1 = VendingMachine.new
-    assert_equal 0, vm1.current_slot_money
-
-    # 初期化された状態でコーラが５本格納されていること
-    assert vm1.stock.hash_num[Drink::Kind::COLA]
-    assert_operator 5, :<=,vm1.stock.hash_num[Drink::Kind::COLA]
-
     # 投入金額の総計を確認できること
-    vm1.return_money
-    vm1.slot_money(500)
-    assert_equal 500, vm1.current_slot_money
-
-	  # ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やすこと
-	  # ＋投入金額の総計と購入可能商品が表示されること
-    assert vm1.purchase(Drink::Kind::COLA)
-    refute vm1.purchase(Drink::Kind::REDBULL) #在庫がない場合
-    vm1.return_money
-    refute vm1.purchase(Drink::Kind::COLA) #投入金額が足りない場合
-
+  def test_current_slot_money
     vm2 = VendingMachine.new
+    assert_equal 0, vm2.current_slot_money
     vm2.slot_money(500)
-    assert_output("現在の投入金額は380円です。\n購入可能商品:\n1:cola\n",nil) do
-       vm2.purchase(Drink::Kind::COLA)
-    end
+    assert_equal 500, vm2.current_slot_money
+  end
 
-  	# 格納されているジュースの情報（値段と名前と在庫）を取得できること
-    assert_equal "商品名:cola,価格:120,在庫数:4\n", vm2.stock_drink
-
-  	# 投入金額、在庫の点で、コーラが購入できるかどうかを取得できること
-    assert vm2.can_buy?(Drink::Kind::COLA)
-    refute vm2.can_buy?(Drink::Kind::REDBULL) #在庫がない場合
-    vm2.return_money
-    refute vm2.can_buy?(Drink::Kind::COLA) #投入金額が足りない場合
-
-	  # 現在の売り上げ金額を取得できること
+    # ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やすこと
+    # ＋投入金額の総計と購入可能商品が表示されること
+    # 投入金額、在庫の点で、コーラが購入できるかどうかを取得できること
+  def test_purchase
     vm3 = VendingMachine.new
     vm3.slot_money(500)
+    assert_output("現在の投入金額は380円です。\n購入可能商品:\n1:cola\n",nil) do
     vm3.purchase(Drink::Kind::COLA)
-    assert_equal 120, vm3.total_sales
+    end
+    assert vm3.purchase(Drink::Kind::COLA) #買えるパターン
+    refute vm3.purchase(Drink::Kind::REDBULL) #在庫がないパターン
+    vm3.return_money
+    refute vm3.purchase(Drink::Kind::COLA) #投入金額が足りないパターン
+  end
+
+    # 現在の売り上げ金額を取得できること
+  def test_total_sales
+    vm4 = VendingMachine.new
+    vm4.slot_money(500)
+    vm4.purchase(Drink::Kind::COLA)
+    assert_output("現在の売上金額: 120円\n") do
+    vm4.total_sales
+    end
+  end
+
+  # 初期化された状態でコーラが５本格納されていること
+  # 格納されているジュースの情報（値段と名前と在庫）を取得できること
+  def test_stock_drink
+    vm5 = VendingMachine.new
+    assert_equal "商品名:cola,価格:120,在庫数:5\n", vm5.stock_drink
   end
 end
