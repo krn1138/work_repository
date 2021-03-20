@@ -130,6 +130,17 @@ class Drink
     end
   end
 
+  # 価格表を初期化
+  # 使用例
+  # result = Drink::init
+  def self.init
+    ITEMS_MASTER={
+      Kind::COLA => {name: "cola", price: 120},
+      Kind::REDBULL => {name: "redbull", price: 200},
+      Kind::WATER => {name: "water", price: 100}
+    }
+  end
+
   # 価格表の内容を文字列で出力
   # 使用例
   # result = Drink::master
