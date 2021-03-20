@@ -32,7 +32,7 @@ class Drink
   # 注意, 指定された種別が数値で無い場合は例外をスローする
   #   v = Drink.new("cola") --> DrinkInitializ
   def initialize(kind, name='', price=0)
-    if(kind.class!=Integer)
+    if( !(kind.class==Integer && kind >=0) )
       raise DrinkInitializeError, MsgErrInvalidKind + "#{kind}.to_s"
     else
       @kind = kind
@@ -48,25 +48,6 @@ class Drink
       end
     end
   end
-
-  # 以下はインスタンスメソッド定義
-
-=begin
-  # 種別を返す
-  def kind
-    @kind
-  end
-
-  # 名前を返す
-  def name
-    @name
-  end
-
-  # 価格を返す
-  def price
-    @price
-  end
-=end
 
   # 以下はクラスメソッド定義
   # 価格表に、指定した飲み物が登録されているか取得
@@ -113,7 +94,7 @@ class Drink
     if( !(kind.class==Integer && kind>=0) )
       puts MsgErrInvalidKind   #return nil
     elsif ITEMS_MASTER.has_key?(kind)
-      puts "specified kind is already exists."  #return nil
+      puts MsgWarnKindAlreadyExists  #return nil
     else
       ITEMS_MASTER[kind]={name: name, price: price}
     end
