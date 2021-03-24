@@ -20,7 +20,7 @@ class VendingMachineTest < Minitest::Test
     assert_nil vm.slot_money(1)
     assert_nil vm.slot_money("kaziyama")
     #お金を投入したら購入可能商品と現在の投入金額が表示されること
-    assert_output("現在の投入金額は500円です。\n購入可能商品:\n1:cola\n",nil) do
+    assert_output("現在の投入金額は500円です。\n購入可能商品一覧\n1:cola\n",nil) do
     vm.slot_money(500)
     end
   end
@@ -49,7 +49,7 @@ class VendingMachineTest < Minitest::Test
   def test_purchase
     vm3 = VendingMachine.new
     vm3.slot_money(500)
-    assert_output("現在の投入金額は380円です。\n購入可能商品:\n1:cola\n",nil) do
+    assert_output("colaを1本購入しました！\n現在の投入金額は380円です。\n購入可能商品一覧\n1:cola\n",nil) do
     vm3.purchase(Drink::Kind::COLA)
     end
     assert vm3.purchase(Drink::Kind::COLA) #買えるパターン
@@ -63,7 +63,7 @@ class VendingMachineTest < Minitest::Test
     vm4 = VendingMachine.new
     vm4.slot_money(500)
     vm4.purchase(Drink::Kind::COLA)
-    assert_output("現在の売上金額: 120円\n") do
+    assert_output("商品名:cola,価格:120,販売本数:1\n現在の売上金額: 120円\n",nil) do
     vm4.total_sales
     end
   end
@@ -72,6 +72,8 @@ class VendingMachineTest < Minitest::Test
   # 格納されているジュースの情報（値段と名前と在庫）を取得できること
   def test_stock_drink
     vm5 = VendingMachine.new
-    assert_equal "商品名:cola,価格:120,在庫数:5\n", vm5.stock_drink
+    assert_output("商品名:cola,価格:120,在庫数:5\n",nil) do
+      vm5.stock_drink
+    end
   end
 end
