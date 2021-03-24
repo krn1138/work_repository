@@ -36,7 +36,7 @@ class VendingMachine
     # 想定外のもの（１円玉や５円玉。千円札以外のお札、そもそもお金じゃないもの（数字以外のもの）など）
     # が投入された場合は、投入金額に加算せず、それをそのまま釣り銭としてユーザに出力する。
     unless MONEY.include?(money)
-      puts "#{money}は使えません"
+      puts "#{money}円は使えません"
       return
     end
 
@@ -59,19 +59,42 @@ class VendingMachine
 
   #格納されているジュースの情報（値段と名前と在庫）を取得できる。
   def stock_drink
-    @stock.to_s
+    info = ""
+    @stock.get_inventory.each do |kind, num|
+      info += "商品名:#{Drink::name(kind)},"
+      info += "価格:#{Drink::price(kind)},"
+      info += "在庫数:#{num}\n"
+    end
+    puts info
   end
 
   # 在庫を追加する
   def add_stock(drink_obj, num)
-    puts "在庫に#{Drink::name(drink_obj.kind)}を#{num}本補充しました"
+    puts "在庫に#{drink_obj.name}を#{num}本補充しました" # エラーが出たときも出力される
     @stock.add(drink_obj, num)
   end
 
   #現在の売上金額を取得できる。
   def total_sales
     _current_sales = @stock.current_sales
-    puts "現在の売上金額: #{_current_sales}円"
+    volume = ""
+    _current_sales[0].each do |kind, num|
+      volume += "商品名:#{Drink::name(kind)},"
+      volume += "価格:#{Drink::price(kind)},"
+      volume += "販売本数:#{num}\n"
+    end
+    puts volume
+    # puts "売上情報: #{_current_sales}円"
+    puts "現在の売上金額: #{_current_sales[1]}円"
+  end
+
+  #自販機クラスで売上金の回収ができる
+  def get_sales
+    stock_array = @stock.reset_sales
+    puts "売上総額:#{stock_array[1]}円\n内訳↓↓"
+    stock_array[0].each do |kind, num|
+      puts "#{Drink::name(kind)}:#{num}本"
+    end
   end
 
   #ジュース値段以上の投入金額が投入されている条件下で購入操作を行うと、ジュースの在庫を減らし、売り上げ金額を増やす。
@@ -80,6 +103,7 @@ class VendingMachine
       @slot_money -= Drink::price(item)
       # return (@stock.pull_one(item)>0 ? true : false)
       if @stock.pull_one(item)>0
+        puts "#{Drink::name(item)}を1本購入しました！"
         puts lamp(@stock.available_items(current_slot_money))
         true
       else
@@ -103,7 +127,7 @@ class VendingMachine
 
   def lamp(items)
     # 在庫に問い合わせた購入可能商品を文字列にする
-    msg = "購入可能商品:\n"
+    msg = "購入可能商品一覧\n"
     items.each do |item|
       msg += item.to_s + ":#{Drink::name(item)}\n"
     end

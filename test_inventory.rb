@@ -17,26 +17,26 @@ class InventoryTest < Minitest::Test
     assert_equal nil, inventory.add("sports", 100) #クラス判定
 
     #現在の在庫情報(rb:18,19で小数点が登場してしまったため、在庫数も小数点第一位まで表示)
-    assert_equal "商品名:cola,価格:120,在庫数:10\n", inventory.to_s
+    assert_equal ({1=>10}), inventory.get_inventory
 
 
     #在庫の払い出し（1:cola＠120円）
     assert_equal 4, inventory.pull(Drink::Kind::COLA, 4)
-    assert_equal 480, inventory.current_sales
+    assert_equal ([{1=>4}, 480]), inventory.current_sales
     assert_equal 6, inventory.pull(Drink::Kind::COLA, 6)
-    assert_equal 1200, inventory.current_sales
+    assert_equal ([{1=>10}, 1200]), inventory.current_sales
     assert_equal 0, inventory.pull(Drink::Kind::COLA, 1)
-    assert_equal 1200, inventory.current_sales
+    assert_equal ([{1=>10}, 1200]), inventory.current_sales
 
     #例外処理
     assert_equal nil, inventory.pull(0.1, 1)
     assert_equal nil, inventory.pull(-1, 1) #負の値でも通る
     assert_equal 1, inventory.add(cola, 1) #通常の在庫追加処理
     assert_equal nil, inventory.pull(Drink::Kind::COLA, -1) #負の値でも通る
-    assert_equal 1200, inventory.current_sales #売上減少してしまう
+    assert_equal ([{1=>10}, 1200]), inventory.current_sales #売上減少してしまう
 
     #現在の在庫情報（在庫も増えてしまっている）
-    assert_equal "商品名:cola,価格:120,在庫数:1\n", inventory.to_s
+    assert_equal ({1=>1}), inventory.get_inventory
 
 
     #在庫の払い出し（１つ）
@@ -47,12 +47,12 @@ class InventoryTest < Minitest::Test
     assert_equal nil, inventory.pull_one("kajiyama") #if文不要？？
 
     #現在の在庫情報
-    assert_equal "商品名:cola,価格:120,在庫数:0\n", inventory.to_s
+    assert_equal ({1=>0}), inventory.get_inventory
 
     #売上集計
-    assert_equal 1320, inventory.current_sales
-    assert_equal 1320, inventory.reset_sales
-    assert_equal 0, inventory.current_sales
+    assert_equal ([{1=>11}, 1320]), inventory.current_sales
+    assert_equal ([{1=>11}, 1320]), inventory.reset_sales
+    assert_equal ([{1=>0}, 0]), inventory.current_sales
   end
 
   def test_inventory_method
@@ -70,7 +70,7 @@ class InventoryTest < Minitest::Test
     assert_equal 20, inventory.add(water, 10)
 
     #在庫確認(cola@120:5, redbull@200:8, water@100:20)
-    assert_equal "商品名:cola,価格:120,在庫数:5\n商品名:redbull,価格:200,在庫数:8\n商品名:water,価格:100,在庫数:20\n", inventory.to_s
+    assert_equal ({1=>5, 2=>8, 3=>20}), inventory.get_inventory
 
     #can_buy?
     assert_equal nil, inventory.can_buy?(0.1, 200)
@@ -99,7 +99,7 @@ class InventoryTest < Minitest::Test
 
     #available_items（追加検証）
     assert_equal 5, inventory.pull(Drink::Kind::COLA, 5)
-    assert_equal 600, inventory.current_sales
+    assert_equal ([{1=>5, 2=>0, 3=>0}, 600]), inventory.current_sales
     assert_equal [2, 3], inventory.available_items(600)
     #assert_equal [], inventory.available_items("") #文字列は当然ダメ
   end
