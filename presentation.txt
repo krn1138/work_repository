@@ -1,5 +1,0 @@
-1.Drinkクラス
-
-2.inventoryクラス
-
-3.VendingMachineクラス

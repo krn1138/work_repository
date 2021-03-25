@@ -49,18 +49,6 @@ class Drink
     end
   end
 
-=begin
-  def kind
-    @kind
-  end
-  def name
-    @name
-  end
-  def price
-    @price
-  end
-=end
-
   # 以下はクラスメソッド定義
   # 価格表に、指定した飲み物が登録されているか取得
   # 使用例

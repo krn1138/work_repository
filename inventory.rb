@@ -59,33 +59,13 @@ class Inventory
     pull(kind, 1)
   end
 
-  #在庫情報を文字列で返す
-  # def to_s
-  #   ret = ""
-  #   @hash_num.each do |kind, num|
-  #     ret += "商品名:#{Drink::name(kind)},"
-  #     ret += "価格:#{Drink::price(kind)},"
-  #     ret += "在庫数:#{num}\n"
-  #   end
-  #   ret
-  # end
-
   def get_inventory
     @hash_num
   end
 
   #現在の売り上げ金額を返す
   def current_sales
-    # volume = ""
-    # @sales_volume.each do |kind, num|
-    #   volume += "商品名:#{Drink::name(kind)},"
-    #   volume += "価格:#{Drink::price(kind)},"
-    #   volume += "販売本数:#{num}\n"
-    # end
-    # #puts volume
-    #@sales
     [@sales_volume, @sales]
-
   end
 
   #売り上げの回収
@@ -134,18 +114,11 @@ class Inventory
     elsif( input_money < 0 )           #入力された金額が正の整数でなければnilを返却
       puts MsgErrInvalidMoney          #return nil
     else
-#      ret_array=[]
-#      @hash_num.each do |kind, num|
-#        if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
-#          ret_array << kind
-#        end
-#      end
       @hash_num.map do |kind, num|
         if ( Drink::price(kind) && (input_money >= Drink::price(kind)) && (num>0) )
           kind
         end
       end.compact
-#      ret_array
     end
   end
 end
